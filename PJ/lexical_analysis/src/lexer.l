@@ -8,9 +8,11 @@
 #include "lexer.h"
 #include "parser.h"
 
-#define SAVE_TOKEN  yylval.string = new std::string(yytext, yyleng)
-#define TOKEN(t)    (yylval.node = t)
-
+#define ptos(x,y) \
+    " at ("+(to_string(x))+","+(to_string(y))+")"
+#define print_location ptos(yylloc.first_line,yylloc.first_column)
+#define TOKEN(t)    (yylval.node = new Node(#t,new std::string(yytext, yyleng)),t)
+#define TOKEN_ERROR(x) (yylval.node = new Node("ERROR",new std::string(x+print_location)),ERROR)
 #define YY_USER_ACTION \
     yylloc.first_line = yylloc.last_line; \
     yylloc.first_column = yylloc.last_column; \
@@ -23,9 +25,6 @@
             yylloc.last_column++; \
         } \
     }
-#define ptos(x,y) \
-    " at ("+(to_string(x))+","+(to_string(y))+")"
-#define print_location ptos(yylloc.first_line,yylloc.first_column)
 %}
 %option     nounput
 %option     noyywrap
@@ -136,13 +135,13 @@ WRITE       return TOKEN(WRITE);
 
 {WS}        ; // skip blanks and tabs
 {NEWLINE}   ;
-{UNTERMINATED_STRING} SAVE_TOKEN; return UNTERMINATED_STRING;
-{UNTERMINATED_COMMENT} SAVE_TOKEN; return UNTERMINATED_COMMENT;
-{ID}        SAVE_TOKEN; if(yylval.string.size() > 255){yylval.string=new("Error: Identifier length out of range."+print_location;return ERROR;}else{return ID;}
+{UNTERMINATED_STRING}  return TOKEN(UNTERMINATED_STRING);
+{UNTERMINATED_COMMENT}  return TOKEN(UNTERMINATED_COMMENT);
+{ID}        if(yylval.string.size() > 255){return TOKEN_ERROR("Error: Identifier length out of range.");}else{return TOKEN(ID);}
 <<EOF>>     return TOKEN(T_EOF);
-{INTEGER}   SAVE_TOKEN; if(yylval.string.size() > 10 || (t.token.size() == 10 && t.token > "2147483647")){yylval.string=new string("Error: Integer out of range."+print_location);return ERROR;}else{return INTEGER;}
+{INTEGER}   if(yylval.string.size() > 10 || (t.token.size() == 10 && t.token > "2147483647")){return TOKEN_ERROR("Error: Integer out of range.");}else{return TOKEN(INTEGER);}
 {COMMENT}   cout<<"COMMENT: "<<(new std::string(yytext, yyleng))<<endl;//todo: collection of comment
-{REAL}      SAVE_TOKEN; return REAL;
-{STRING}    SAVE_TOKEN;if(yylval.string.find_first_of("\t\n") != std::string::npos) {yylval.string=new string("Error: String contains tabs or newlines."+print_location);return ERROR;}else if(yylval.string.size() > 257){yylval.string=new string("Error: String length out of range."+print_location);return ERROR;} else{  return STRING;}
+{REAL}      return TOKEN(REAL);
+{STRING}    if(yylval.string.find_first_of("\t\n") != std::string::npos) {return TOKEN_ERROR("Error: String contains tabs or newlines.");}else if(yylval.string.size() > 257){return TOKEN_ERROR("Error: String length out of range.");} else{  return TOKEN(STRING);}
 {UNKNOWN}   printf("Unknown token!\n"); yyterminate();
 %%
