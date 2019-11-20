@@ -1,13 +1,14 @@
 include_directories(include)
-set(FlexOutput ${CMAKE_CURRENT_BINARY_DIR}/lexer.c)
+include_directories(../syntax_analysis/include)
+set(FlexOutput ${CMAKE_CURRENT_BINARY_DIR}/lexer.cpp)
 # set(LEX_EXECUTABLE ${CMAKE_SOURCE_DIR}/bin)
 
 add_custom_command(
     OUTPUT ${FlexOutput}
     COMMAND ${FLEX_EXECUTABLE}
             --outfile=${FlexOutput}
-            ${CMAKE_CURRENT_SOURCE_DIR}/src/lexer.lex
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/lexer.lex
+            ${CMAKE_CURRENT_SOURCE_DIR}/src/lexer.l
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/lexer.l
     COMMENT "Generating lexer.c"
 )
 

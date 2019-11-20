@@ -3,9 +3,8 @@
 #include <string>
 #include <cstdio>
 #include <iomanip>
-
-#include "lexer.h"
 #include "lexAnalyzer.h"
+#include "lexer.h"
 using namespace std;
 
 int main(int argc, char** argv) {
@@ -21,9 +20,5 @@ int main(int argc, char** argv) {
         yyin = stdin;
     }
 
-    LexAnalyzer *lexAnalyzer = LexAnalyzer::GetInstance();
-    lexAnalyzer->analyze();
-    lexAnalyzer->sanityCheck();
-    lexAnalyzer->display();
     return 0;
 }

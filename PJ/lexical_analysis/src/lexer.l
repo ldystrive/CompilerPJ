@@ -43,7 +43,7 @@ EQ          =
 NEQ         <>
 
 COLON       :
-SEMICOLON   )
+SEMICOLON   ;
 COMMA       ,
 DOT         \.
 LPAREN      \(
@@ -69,7 +69,7 @@ BACKSLASH   \\
 {GT}        return TOKEN(GT);
 {GE}        return TOKEN(GE);
 {EQ}        return TOKEN(EQ);
-{NEQ}       return TOKEN(OPERATOR);
+{NEQ}       return TOKEN(NEQ);
 
 {COLON}     return TOKEN(COLON);
 {SEMICOLON} return TOKEN(SEMICOLON);
@@ -87,7 +87,7 @@ BACKSLASH   \\
 
 AND         return TOKEN(AND);
 ARRAY       return TOKEN(ARRAY);
-BEGIN       return TOKEN(BEGIN);
+BEGIN       return TOKEN(BBEGIN);
 BY          return TOKEN(BY);
 DIV         return TOKEN(DIV);
 DO          return TOKEN(DO);
@@ -122,11 +122,11 @@ WRITE       return TOKEN(WRITE);
 {NEWLINE}   ;
 {UNTERMINATED_STRING} return TOKEN(UNTERMINATED_STRING);
 {UNTERMINATED_COMMENT} return TOKEN(UNTERMINATED_COMMENT);
-{ID}        SAVE_TOKEN; return ID;
+{ID}        SAVE_TOKEN; if(yylval.string.size() > 255){yylval.string=new("Error: Identifier length out of range.");return ERROR;}else{return ID;}
 <<EOF>>     return TOKEN(T_EOF);
-{INTEGER}   SAVE_TOKEN; return INTEGER;
+{INTEGER}   SAVE_TOKEN; if(yylval.string.size() > 10 || (t.token.size() == 10 && t.token > "2147483647")){yylval.string=new string("Error: Integer out of range.");return ERROR;}else{return INTEGER;}
 {COMMENT}   ;
 {REAL}      SAVE_TOKEN; return REAL;
-{STRING}    SAVE_TOKEN; return STRING; // fixme: sanCheck
+{STRING}    SAVE_TOKEN;if(yylval.string.find_first_of("\t\n") != std::string::npos) {yylval.string=new string("Error: String contains tabs or newlines.");return ERROR;}else if(yylval.string.size() > 257){yylval.string=new string("Error: String length out of range.");return ERROR;} else{  return STRING;}
 {UNKNOWN}   printf("Unknown token!\n"); yyterminate();
 %%
