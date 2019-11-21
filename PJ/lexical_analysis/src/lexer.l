@@ -11,8 +11,8 @@
 #define ptos(x,y) \
     " at ("+(to_string(x))+","+(to_string(y))+")"
 #define print_location ptos(yylloc.first_line,yylloc.first_column)
-#define TOKEN(t)    (yylval.node = new Node(#t,new std::string(yytext, yyleng)),t)
-#define TOKEN_ERROR(x) (yylval.node = new Node("ERROR",new std::string(x+print_location)),ERROR)
+#define TOKEN(t)    (yylval.node = new Node(#t,std::string(yytext, yyleng)),t)
+#define TOKEN_ERROR(x) (yylval.node = new Node("ERROR",std::string(x+print_location)),ERROR)
 #define YY_USER_ACTION \
     yylloc.first_line = yylloc.last_line; \
     yylloc.first_column = yylloc.last_column; \
