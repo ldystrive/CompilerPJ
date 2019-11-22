@@ -15,6 +15,7 @@ public:
     string tokenType,value;
     bool is_leaf;
     bool is_visible;
+    int first_line,first_column,last_line,last_column;
     Node(string tokenType,int num,...):tokenType(tokenType),is_leaf(false),is_visible(true)
     {
         va_list ap;
@@ -24,9 +25,16 @@ public:
             Node* ch=va_arg(ap,Node*);
             this->child.push_back(ch);
         }
+        if(!num)
+            return;
+        this->first_line=this->child.front()->first_line;
+        this->first_column=this->child.front()->first_column;
+        this->last_line=this->child.back()->last_line;
+        this->last_column=this->child.back()->last_column;
+
     }
 
-    Node(string tokenType,string value):tokenType(tokenType),value(value),is_leaf(true),is_visible(true){}
+    Node(string tokenType,string value,int first_line,int first_column,int last_line,int last_column):tokenType(tokenType),value(value),is_leaf(true),is_visible(true),first_line(first_line),first_column(first_column),last_line(last_line),last_column(last_column){}
     ~Node()
     {
         for(auto ch:this->child)
@@ -38,6 +46,10 @@ public:
         root->value=this->value;
         root->is_leaf=this->is_leaf;
         root->is_visible=this->is_visible;
+        root->first_line=this->first_line;
+        root->first_column=this->first_column;
+        root->last_line=this->last_line;
+        root->last_column=this->last_column;
         for(auto ch:this->child)
         {
             Node* tmp=ch->show();
@@ -66,16 +78,19 @@ public:
         this->is_visible=true;
         return this;
     }
+    string position()
+    {
+        return " at ( "+std::to_string(this->first_line)+", "+std::to_string(this->first_column)+", "+std::to_string(this->last_line)+", "+std::to_string(this->last_column)+")";
+    }
     void print(string indent)
     {
-        std::cout<<indent<<this->tokenType<<(this->is_leaf?" "+this->value:"")<<std::endl;
+        std::cout<<indent<<this->tokenType<<this->position()<<(this->is_leaf?" "+this->value:"")<<std::endl;
         for(auto ch:this->child)
             ch->print(indent+"\t");
     }
 };
 #endif
-#define debug
-#ifdef debug
+/*
 int main()
 {
     Node* head[1010];
@@ -94,4 +109,4 @@ int main()
     head[9]->print("");
     return 0;
 }
-#endif
+*/
