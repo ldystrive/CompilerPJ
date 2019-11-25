@@ -1,0 +1,52 @@
+program         -> PROGRAM IS body ';'
+body            -> {declaration} BEGIN {statement} END
+declaration     -> VAR {var-decl}
+                -> TYPE {type-decl}
+                -> PROCEDURE {procedure-decl}
+var-decl        -> ID { ',' ID } [ ':' typename ] ':=' expression ';' 
+type-decl       -> ID IS type ';' 
+procedure-decl  -> ID formal-params [':' typename] IS body ';'
+typename        -> ID
+type            -> ARRAY OF typename
+                -> RECORD component {component} END
+component       -> ID ':' typename ';'
+formal-params   -> '(' fp-section {';' fp-section } ')' 
+                -> '(' ')' 
+fp-section      -> ID {',' ID} ':' typename
+statement       -> lvalue ':=' expression ';'
+                -> ID actual-params ';'
+                -> READ '(' lvalue {',' lvalue} ')' ';'
+                -> WRITE write-params ';'
+                -> IF expression THEN {statement}
+                   {ELSIF expression THEN {statement}}
+                   [ELSE {statement}] END ';'
+                -> WHILE expression DO {statement} END ';'
+                -> LOOP {statement} END ';'
+                -> FOR ID ':=' expression TO expression [ BY expression ] 
+                   DO {statement} END ';'
+                -> EXIT ';'
+                -> RETURN [expression] ';'
+write-params    -> '(' write-expr {',' write-expr } ')'
+                -> '(' ')'
+write-expr      -> STRING
+                -> expression
+expression      -> number
+                -> lvalue
+                -> '(' expression ')'
+                -> unary-op expression
+                -> expression binary-op expression
+                -> ID actual-params
+                -> ID record-inits
+                -> ID array-inits
+lvalue          -> ID
+                -> lvalue '[' expression ']'
+                -> lvalue '.' ID
+actual-params   -> '(' expression {',' expression} ')'
+                -> '(' ')'
+record-inits    -> '{' ID ':=' expression { ';' ID ':=' expression} '}'
+array-inits     -> '[<' array-init { ',' array-init } '>]'
+array-init      -> [ expression OF ] expression
+number          -> INTEGER | REAL
+unary-op        -> '+' | '-' | NOT
+binary-op       -> '+' | '-' |  '*' | '/' | DIV | MOD | OR | AND
+                -> '>' | '<' | '=' | '>=' | '<=' | '<>'

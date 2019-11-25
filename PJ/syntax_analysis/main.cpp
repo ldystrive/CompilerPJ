@@ -3,8 +3,16 @@
 #include <string>
 #include <cstdio>
 #include <iomanip>
-#include "lexAnalyzer.h"
-#include "lexer.h"
+
+#include "tree.hpp"
+#include "parser.hpp"
+
+extern int yylex();
+extern FILE* yyin;
+extern char* yytext;
+extern int yyleng;
+extern int yyparse();
+extern Node* root;
 using namespace std;
 
 int main(int argc, char** argv) {
@@ -19,6 +27,10 @@ int main(int argc, char** argv) {
     } else {
         yyin = stdin;
     }
-
+    yyparse();
+    Node* tmp;
+    tmp=root->show();
+    delete root;
+    tmp->print("");
     return 0;
 }
