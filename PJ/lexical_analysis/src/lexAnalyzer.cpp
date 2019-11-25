@@ -6,7 +6,7 @@
 #include <map>
 #include "lexAnalyzer.h"
 #include "lexer.h"
-
+/*
 LexAnalyzer* LexAnalyzer::m_instance = nullptr;
 
 std::map<int, std::string> type2str {
@@ -119,3 +119,4 @@ void LexAnalyzer::display() {
     }
     std::cout << errorCount << " errors, " << tokens.size() - errorCount << " tokens." << std::endl;
 }
+*/

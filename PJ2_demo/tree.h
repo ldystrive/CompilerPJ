@@ -1,6 +1,7 @@
 #include <string>
-using namespace std;
 
-// struct node_t { };
-
-// node_t* create_node();
+//todo: struct Node
+//feature: new Node(n,arg_1,arg_2,...,arg_n)
+//feature: root->show()
+//feature: if node->invisble is true then 
+//         node->child is shown as node->father->child.
