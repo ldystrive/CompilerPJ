@@ -84,9 +84,10 @@ public:
     }
     void print(string indent)
     {
-        std::cout<<indent<<this->tokenType<<this->position()<<(this->is_leaf?" "+this->value:"")<<std::endl;
+        std::cout<<indent<<(this->tokenType=="BBEGIN"?"BEGIN":this->tokenType)<<this->position()<<(this->is_leaf?" "+this->value:"")<<std::endl;
+        
         for(auto ch:this->child)
-            ch->print(indent+"\t");
+            ch->print(indent+"  ");
     }
 };
 #endif
